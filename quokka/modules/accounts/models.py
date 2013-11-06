@@ -40,6 +40,8 @@ class User(db.DynamicDocument, UserMixin):
 
     username = db.StringField(max_length=50, required=False, unique=True)
 
+    meta = {'allow_inheritance': True}
+
     def clean(self, *args, **kwargs):
         if not self.username:
             self.username = User.generate_username(self.email)

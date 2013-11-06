@@ -5,6 +5,7 @@ from flask import send_from_directory, current_app, request
 from flask.ext.security import roles_accepted
 from quokka.core.views import ContentDetail, ContentList
 from quokka.core.models import Channel
+from quokka.modules.question.views import QuestionDetail
 
 
 @roles_accepted('admin', 'developer')
@@ -37,6 +38,11 @@ def configure(app):
     # Match channels by its long_slug mpath
     app.add_url_rule('/<path:long_slug>/',
                      view_func=ContentList.as_view('list'))
+
+    app.add_url_rule('/questions/<path:pretty_slug>.html',
+                     view_func=QuestionDetail.as_view('question-detail'))
+
+
     # Home page
     app.add_url_rule(
         '/',

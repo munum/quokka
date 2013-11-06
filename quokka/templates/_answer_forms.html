@@ -1,0 +1,40 @@
+{% macro render(form) -%}
+
+
+<fieldset style="padding: 1.25em 2.0em">
+
+{% for field in form %}
+{% if field.type in ['CSRFTokenField', 'HiddenField'] %}
+  {{ field() }}
+{% endif %}
+{% endfor %}
+  <div class="clearfix">
+    <div class="input">
+          <ol type="A" style="line-height: 1.25em">
+           {% for subfield in form.answer %}
+              <span class="large-1 column"><li>{{ subfield }}</li></span>
+                  <span class="large-11 columns">{{ subfield.label }}</span>
+                  <hr>
+
+           {% endfor %}
+           </ol>
+      {% if form.answer.errors or form.answer.help_text %}
+        <span class="help-inline">
+        {% if form.answer.errors %}
+          {{ form.answer.errors|join(' ') }}
+        {% else %}
+          {{ form.answer.help_text }}
+        {% endif %}
+        </span>
+      {% endif %}
+    </div>
+    <div class="input">
+      <p>Brief Explanation (Optional)</p>
+      {{ form.explanation(rows=20, cols=20) }}
+    </div>
+
+  </div>
+
+</fieldset>
+
+{% endmacro %}
