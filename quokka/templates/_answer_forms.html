@@ -8,12 +8,15 @@
   {{ field() }}
 {% endif %}
 {% endfor %}
+  <style>
+      .choice:hover{background:#d0e9c6;}
+  </style>
   <div class="clearfix">
     <div class="input">
           <ol type="A" style="line-height: 1.25em">
            {% for subfield in form.answer %}
               <span class="large-1 column"><li>{{ subfield }}</li></span>
-                  <span class="large-11 columns">{{ subfield.label }}</span>
+                  <span class="large-11 columns choice">{{ subfield.label }}</span>
                   <hr>
 
            {% endfor %}
