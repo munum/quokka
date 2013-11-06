@@ -22,9 +22,9 @@ class Role(db.Document, RoleMixin):
         return "{0} ({1})".format(self.name, self.description or 'Role')
 
 
-class User(db.Document, UserMixin):
+class User(db.DynamicDocument, UserMixin):
     name = db.StringField(max_length=255)
-    email = db.StringField(max_length=255, unique=True)
+    email = db.EmailField(max_length=255, unique=True)
     password = db.StringField(max_length=255)
     active = db.BooleanField(default=True)
     confirmed_at = db.DateTimeField()
@@ -39,6 +39,15 @@ class User(db.Document, UserMixin):
     login_count = db.IntField()
 
     username = db.StringField(max_length=50, required=False, unique=True)
+
+    def clean(self, *args, **kwargs):
+        if not self.username:
+            self.username = User.generate_username(self.email)
+
+        try:
+            super(User, self).clean(*args, **kwargs)
+        except:
+            pass
 
     @classmethod
     def generate_username(cls, email):

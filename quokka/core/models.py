@@ -6,15 +6,16 @@ import logging
 import datetime
 import random
 from flask import url_for, current_app
-from flask.ext.security import current_user
 from flask.ext.admin.babel import lazy_gettext
 from quokka.core.db import db
+from quokka.core.fields import MultipleObjectsReturned
 from quokka import admin
 from quokka.core.admin import _, _l
 from quokka.core.admin.models import ModelAdmin
 from quokka.core.admin.ajax import AjaxModelLoader
 from quokka.modules.accounts.models import User
 from quokka.utils.text import slugify
+from quokka.utils import get_current_user
 
 logger = logging.getLogger()
 
@@ -41,13 +42,10 @@ class Publishable(Dated, Owned):
     def save(self, *args, **kwargs):
         self.updated_at = datetime.datetime.now()
 
-        try:
-            user = User.objects.get(id=current_user.id)
-            if not self.id:
-                self.created_by = user
-            self.last_updated_by = user
-        except Exception as e:
-            logger.warning("No user to save the model: %s" % e.message)
+        user = get_current_user()
+        if not self.id:
+            self.created_by = user
+        self.last_updated_by = user
 
         super(Publishable, self).save(*args, **kwargs)
 
@@ -178,7 +176,7 @@ class CustomValue(db.EmbeddedDocument):
         super(CustomValue, self).clean()
 
     def __unicode__(self):
-        return self.name
+        return u"{s.name} -> {s.value}".format(s=self)
 
 
 class HasCustomValue(object):
@@ -379,6 +377,19 @@ class Config(HasCustomValue, Publishable, db.DynamicDocument):
     group = db.StringField(max_length=255)
     description = db.StringField()
 
+    @classmethod
+    def get(cls, group, name=None, default=None):
+        instance = cls.objects.get(group=group)
+        if not name:
+            ret = instance.values
+        else:
+            try:
+                ret = instance.values.get(name=name).value
+            except MultipleObjectsReturned:
+                ret = None
+
+        return ret or default
+
     def save(self, *args, **kwargs):
         super(Config, self).save(*args, **kwargs)
 
@@ -394,6 +405,10 @@ class Config(HasCustomValue, Publishable, db.DynamicDocument):
 
     def __unicode__(self):
         return self.group
+
+
+class Quokka(Dated, Slugged, db.DynamicDocument):
+    """ Hidden collection """
 
 
 class ContentTemplateType(TemplateType, db.Document):
@@ -422,14 +437,18 @@ class SubContent(Publishable, Ordered, db.EmbeddedDocument):
     content = db.ReferenceField('Content', required=True)
     caption = db.StringField()
     purpose = db.ReferenceField(SubContentPurpose, required=True)
+    identifier = db.StringField()
 
     meta = {
         'ordering': ['order'],
         'indexes': ['order']
     }
 
+    def clean(self):
+        self.identifier = self.purpose.identifier
+
     def __unicode__(self):
-        return self.content.title
+        return self.content and self.content.title or self.caption
 
 
 ###############################################################
@@ -452,6 +471,21 @@ class Content(HasCustomValue, Publishable, LongSlugged, Commentable,
         'indexes': ['-created_at', 'slug'],
         'ordering': ['-created_at']
     }
+
+    def get_main_image_url(self, thumb=False, default=None):
+        try:
+            main_image = SubContentPurpose.objects.get(identifier='mainimage')
+            if not thumb:
+                path = self.contents.get(purpose=main_image).content.path
+            else:
+                path = self.contents.get(purpose=main_image).content.thumb
+            return url_for('media', filename=path)
+        except Exception as e:
+            logger.warning(str(e))
+            return default
+
+    def get_uid(self):
+        return str(self.id)
 
     def get_themes(self):
         themes = self.channel.get_themes()

@@ -134,7 +134,7 @@ DEBUG_TB_PANELS = (
     'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
     'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
     'flask_debugtoolbar.panels.template.TemplateDebugPanel',
-    'flask.ext.mongoengine.panels.MongoDebugPanel',
+    #'flask.ext.mongoengine.panels.MongoDebugPanel',
     'flask_debugtoolbar.panels.logger.LoggingPanel',
     'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
 )
@@ -187,6 +187,8 @@ SECURITY_CHANGEABLE = True
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 
+SECURITY_SEND_REGISTER_EMAIL = False
+SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
 
 """
 Dealer can versionate static files if you are under a repo
@@ -228,3 +230,6 @@ MEDIA_IMAGE_ALLOWED_EXTENSIONS = ('jpg', 'jpeg', 'png', 'tiff', 'gif', 'bmp')
 MEDIA_AUDIO_ALLOWED_EXTENSIONS = ('mp3', 'wmv', 'ogg')
 MEDIA_VIDEO_ALLOWED_EXTENSIONS = ('avi', 'mp4', 'mpeg')
 MEDIA_FILE_ALLOWED_EXTENSIONS = ('pdf', 'txt', 'doc', 'docx', 'xls', 'xmlsx')
+
+# default admin THEME
+ADMIN_THEME = 'cosmo'
