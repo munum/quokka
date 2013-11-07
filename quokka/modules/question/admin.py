@@ -26,7 +26,7 @@ class QuestionAdmin(PostAdmin):
                          'created_at': ModelAdmin.formatters.get('datetime'),
                          'available_at': ModelAdmin.formatters.get('datetime')}
 
-    form_columns = ['title', 'slug', 'channel',
+    form_columns = ['title', 'slug', 'channel', 'published',
                     'body', 'choice_A', 'choice_B', 'choice_C', 'choice_D',
                     'choice_E', 'correct_answer']
 

@@ -52,7 +52,7 @@ class Question(Content, QuestionLongSlugged, Answerable):
     choice_C = db.StringField(required=True)
     choice_D = db.StringField(required=True)
     choice_E = db.StringField(required=True)
-    correct_answer = db.StringField(choices=[chr(65+k) for k in range(0,5)], required=True)
+    correct_answer = db.StringField(choices=[chr(65+k) for k in range(0, 5)], required=True)
 
     published = db.BooleanField(default=True)
 

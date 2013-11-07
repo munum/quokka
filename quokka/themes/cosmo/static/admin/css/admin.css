@@ -86,13 +86,13 @@ table.filters {
 
 /* Forms */
 .form-horizontal .control-label {
-    width: 100px;
+    width: 130px;
     text-align: left;
     margin-left: 4px;
 }
 
 .form-horizontal .controls {
-    margin-left: 110px;
+    margin-left: 130px;
 }
 
 /* Inline forms */
