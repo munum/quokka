@@ -32,7 +32,7 @@ class Answerable(object):
 
 
 class QuestionLongSlugged(LongSlugged):
-    pretty_slug = db.StringField(unique=True, required=True)
+    pretty_slug = db.StringField(required=True)
 
     def _create_mpath_long_slug(self):
         if isinstance(self, Content):
@@ -57,7 +57,6 @@ class Question(Content, QuestionLongSlugged, Answerable):
     published = db.BooleanField(default=True)
 
     def get_absolute_url(self, endpoint='question-detail'):
-
         if self.channel.is_homepage:
             #long_slug = self.slug
             pretty_slug = self.slug
