@@ -230,8 +230,9 @@ class QuestionDetail(MethodView):
                   question.choice_E]
         choices = [(chr(65+c), v) for c,v in list(enumerate(labels))]
 
-        random.seed(session['user_id'])
-        random.shuffle(choices)
+        r = random.Random()
+        r.seed(session['user_id'])
+        r.shuffle(choices)
 
         self.Form.answer = RadioField('Choice', choices=choices)
 
