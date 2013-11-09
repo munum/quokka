@@ -41,7 +41,7 @@ class QuestionLongSlugged(LongSlugged):
             )
             self.mpath = "".join([self.channel.mpath, self.slug, ','])
 
-            self.pretty_slug = 'q-' + str(random.randint(10000, 99999))
+            self.pretty_slug = 'q-' + str(random.randint(1000000, 9999999))
 
 
 class Question(Content, QuestionLongSlugged, Answerable):
